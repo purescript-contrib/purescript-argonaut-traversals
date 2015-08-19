@@ -17,16 +17,16 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "purescript-argonaut-core": "^0.1.0",
-    "purescript-argonaut-codecs": "^0.1.0",
+    "purescript-argonaut-core": "^0.2.0",
+    "purescript-argonaut-codecs": "^0.2.0",
     "purescript-lens": "^0.8.0",
-    "purescript-optics": "https://github.com/paf31/purescript-optic.git#0.7"
+    "purescript-optic": "^0.8.0"
   },
   "resolutions": {
     "purescript-lens": "^0.8.0"
   },
   "devDependencies": {
-    "purescript-strongcheck": "^0.10.0",
+    "purescript-strongcheck": "^0.12.0",
     "purescript-console": "^0.1.0"
   }
 }
