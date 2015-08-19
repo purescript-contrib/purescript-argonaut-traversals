@@ -11,16 +11,19 @@ import Test.StrongCheck.Gen
 import Control.Monad.Eff.Console (log)
 import Data.Either (Either(..))
 
-instance arbJCursor :: Arbitrary JCursor where
+newtype TestJCursor = TestJCursor JCursor
+runTestJCursor (TestJCursor cursor) = cursor
+
+instance arbJCursor :: Arbitrary TestJCursor where
   arbitrary = do
     i <- chooseInt 0.0 2.0
-    case i of
+    TestJCursor <$> case i of
       0 -> pure JCursorTop
-      1 -> JField <$> arbitrary <*> arbitrary
-      2 -> JIndex <$> arbitrary <*> arbitrary
+      1 -> JField <$> arbitrary <*> (runTestJCursor <$> arbitrary)
+      2 -> JIndex <$> arbitrary <*> (runTestJCursor <$> arbitrary)
 
-prop_jcursor_serialization :: JCursor -> Result 
-prop_jcursor_serialization c =
+prop_jcursor_serialization :: TestJCursor -> Result 
+prop_jcursor_serialization (TestJCursor c) =
   (decodeJson (encodeJson c) == Right c) <?> "JCursor: " <> show c
 
 main = do
