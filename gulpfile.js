@@ -3,7 +3,6 @@
 var gulp        = require('gulp')
   , purescript  = require('gulp-purescript')
   , run         = require('gulp-run')
-  , runSequence = require('run-sequence')
   ;
 
 function sequence() {
@@ -66,4 +65,4 @@ gulp.task('test', ['test-make'], function() {
 });
 
 
-gulp.task("default", sequence("make", "docs"));
+gulp.task("default", ["make", "docs"]);
