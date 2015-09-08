@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/purescript-contrib/purescript-argonaut-traversals?branch=master)](https://travis-ci.org/purescript-contrib/purescript-argonaut-traversals)
+[![Build Status](https://travis-ci.org/purescript-contrib/purescript-argonaut-traversals.svg?branch=master)](https://travis-ci.org/purescript-contrib/purescript-argonaut-traversals)
 
 # purescript-argonaut-traversals
 
