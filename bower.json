@@ -21,7 +21,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "purescript-argonaut-codecs": "^0.2.0",
+    "purescript-argonaut-codecs": "^0.3.0",
     "purescript-optic": "^0.8.0"
   },
   "devDependencies": {
