@@ -3,19 +3,19 @@ module Data.Argonaut.JCursor where
 import Prelude
 
 import Data.Argonaut.Core
-import Data.Argonaut.Encode
 import Data.Argonaut.Decode
-import Data.Maybe (Maybe(..), fromMaybe, maybe)
-import Data.List (List(), zipWith, range, head, singleton, toList)
+import Data.Argonaut.Encode
 import Data.Either (Either(..))
+import Data.Foldable (foldl)
+import Data.List (List(), zipWith, range, head, singleton, toList)
+import Data.Maybe (Maybe(..), fromMaybe, maybe)
 import Data.Monoid (Monoid, mempty)
 import Data.Tuple (Tuple(..), fst, snd)
-import Data.Foldable (foldl)
 
-import qualified Data.Int as I
 import qualified Data.Array as A
-import qualified Data.StrMap as M
+import qualified Data.Int as I
 import qualified Data.Maybe.Unsafe as MU
+import qualified Data.StrMap as M
 
 data JCursor
   = JCursorTop
@@ -58,7 +58,7 @@ insideOut (JIndex i c) = downIndex i (insideOut c)
 downField :: String -> JCursor -> JCursor
 downField i = downField' where
   downField' JCursorTop = JField i JCursorTop
-  downField' (JField i' c) = JField i' (downField' c) 
+  downField' (JField i' c) = JField i' (downField' c)
   downField' (JIndex i' c) = JIndex i' (downField' c)
 
 downIndex :: Int -> JCursor -> JCursor
@@ -83,7 +83,7 @@ cursorSet :: JCursor -> Json -> Json -> Maybe Json
 cursorSet JCursorTop v = pure <<< const v
 cursorSet (JField i c) v = foldJsonObject defaultObj mergeObjs
   where
-  defaultObj :: Maybe Json 
+  defaultObj :: Maybe Json
   defaultObj = fromObject <<< M.singleton i <$> cursorSet c v (inferEmpty c)
 
   mergeObjs :: JObject -> Maybe Json
@@ -94,7 +94,7 @@ cursorSet (JIndex i c) v = foldJsonArray defaultArr mergeArrs
   where
   defaultArr :: Maybe Json
   defaultArr = fromArray <<< MU.fromJust <<<
-                 flip (A.updateAt i) (A.replicate (i + 1) jsonNull) <$> 
+                 flip (A.updateAt i) (A.replicate (i + 1) jsonNull) <$>
                  cursorSet c v (inferEmpty c)
 
   mergeArrs :: JArray -> Maybe Json
@@ -108,14 +108,14 @@ cursorSet (JIndex i c) v = foldJsonArray defaultArr mergeArrs
        else if i >= len
             then setArr (xs <> (A.replicate (i - len + 1) jsonNull)) i v
             else Just <<< fromArray <<< MU.fromJust $ A.updateAt i v xs
-     
+
 
 toPrims :: Json -> List (Tuple JCursor JsonPrim)
 toPrims = foldJson nullFn boolFn numFn strFn arrFn objFn
   where
   mkTop :: JsonPrim -> List (Tuple JCursor JsonPrim)
   mkTop p = singleton $ Tuple JCursorTop p
-    
+
   nullFn :: JNull -> List (Tuple JCursor JsonPrim)
   nullFn _ = mkTop primNull
 
@@ -139,7 +139,7 @@ toPrims = foldJson nullFn boolFn numFn strFn arrFn objFn
   arrFn' (Tuple i j) = toList ((\t -> Tuple (JIndex i (fst t)) (snd t))
                                <$> toPrims j)
 
-  
+
   objFn :: JObject -> List (Tuple JCursor JsonPrim)
   objFn obj =
     let f :: Tuple String Json -> List (Tuple JCursor JsonPrim)
@@ -197,7 +197,7 @@ instance encodeJsonJCursor :: EncodeJson JCursor where
     loop (JIndex i c) = [encodeJson i] <> loop c
 
 fail :: forall a b. (Show a) => a -> Either String b
-fail x = Left $ "Expected String or Number but found: " ++ show x            
+fail x = Left $ "Expected String or Number but found: " ++ show x
 
 instance decodeJsonJCursor :: DecodeJson JCursor where
   decodeJson j = decodeJson j >>= loop
@@ -220,4 +220,4 @@ instance decodeJsonJCursor :: DecodeJson JCursor where
 
 
 
-  
+

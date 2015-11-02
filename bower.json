@@ -22,9 +22,9 @@
   "license": "MIT",
   "dependencies": {
     "purescript-argonaut-codecs": "^0.3.0",
-    "purescript-optic": "^0.8.0"
+    "purescript-profunctor-lenses": "^0.3.3"
   },
   "devDependencies": {
-    "purescript-strongcheck": "^0.12.1"
+    "purescript-strongcheck": "^0.14.3"
   }
 }
