@@ -1,11 +1,9 @@
 {
-  "name": "purescript-argonaut-traversals",
-  "description": "Prisms, zippers and traversals for Json type from purescript-argonaut library",
-  "license": "MIT",
+  "private": true,
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-purescript": "^0.7.0",
     "gulp-run": "^1.6.8",
-    "purescript": "^0.7.5-rc.3"
+    "purescript": "^0.7.5"
   }
 }
