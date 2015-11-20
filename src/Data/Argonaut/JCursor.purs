@@ -9,7 +9,7 @@ import Data.Either (Either(..))
 import Data.Foldable (foldl)
 import Data.List (List(), zipWith, range, head, singleton, toList)
 import Data.Maybe (Maybe(..), fromMaybe, maybe)
-import Data.Monoid (Monoid, mempty)
+import Data.Monoid (Monoid)
 import Data.Tuple (Tuple(..), fst, snd)
 
 import qualified Data.Array as A
