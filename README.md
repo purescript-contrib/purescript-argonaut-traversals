@@ -15,6 +15,4 @@ bower install purescript-argonaut-traversals
 
 ## Documentation
 
-- [Data.Argonaut.Prisms](docs/Data/Argonaut/Prisms.md)
-- [Data.Argonaut.Traversals](docs/Data/Argonaut/Traversals.md)
-- [Data.Argonaut.JCursor](docs/Data/Argonaut/JCursor.md)
+Module documentation is [published on Pursuit](http://pursuit.purescript.org/packages/purescript-argonaut-traversals).
