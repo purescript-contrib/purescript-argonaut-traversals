@@ -1,6 +1,6 @@
 module Data.Argonaut.Prisms where
 
-import Data.Argonaut.Core
+import Data.Argonaut.Core (JObject, Json, JArray, JString, JNumber, JBoolean, JNull, toObject, fromObject, toArray, fromArray, toString, fromString, toNumber, fromNumber, toBoolean, fromBoolean, toNull, fromNull)
 import Data.Lens (PrismP(), prism')
 
 _Null :: PrismP Json JNull

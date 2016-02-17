@@ -1,6 +1,6 @@
 module Data.Argonaut.Traversals where
 
-import Data.Argonaut.Core
+import Data.Argonaut.Core (Json, isObject, isArray, isString, isNumber, isBoolean, isNull)
 import Data.Lens (TraversalP(), filtered)
 import Prelude ((<<<), id)
 
