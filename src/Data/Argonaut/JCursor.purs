@@ -1,21 +1,21 @@
 module Data.Argonaut.JCursor where
 
-import Prelude
+import Prelude (class Show, class Semigroup, class Ord, class Eq, Ordering(EQ, GT, LT), (>>=), flip, (<<<), ($), bind, pure, show, (++), (<>), compare, (==), (&&), (<$>), (-), (+), (>=), (<), const)
 
-import Data.Argonaut.Core
-import Data.Argonaut.Decode
-import Data.Argonaut.Encode
+import Data.Argonaut.Core (JNumber, Json, JObject, JArray, JString, JBoolean, JNull, foldJson, foldJsonArray, fromArray, jsonNull, foldJsonObject, fromObject, jsonEmptyArray, jsonEmptyObject, fromString, fromNumber, fromBoolean, fromNull)
+import Data.Argonaut.Decode (class DecodeJson, decodeJson)
+import Data.Argonaut.Encode (class EncodeJson, encodeJson)
 import Data.Either (Either(..))
 import Data.Foldable (foldl)
 import Data.List (List(), zipWith, range, head, singleton, toList)
 import Data.Maybe (Maybe(..), fromMaybe, maybe)
-import Data.Monoid (Monoid)
+import Data.Monoid (class Monoid)
 import Data.Tuple (Tuple(..), fst, snd)
 
-import qualified Data.Array as A
-import qualified Data.Int as I
-import qualified Data.Maybe.Unsafe as MU
-import qualified Data.StrMap as M
+import Data.Array as A
+import Data.Int as I
+import Data.Maybe.Unsafe as MU
+import Data.StrMap as M
 
 data JCursor
   = JCursorTop
@@ -217,7 +217,3 @@ instance decodeJsonJCursor :: DecodeJson JCursor where
     goNum :: JCursor -> JNumber -> Either String JCursor
     goNum c num =
       maybe (Left "Not an Int") (Right <<< (flip JIndex c)) $ I.fromNumber num
-
-
-
-
