@@ -1,3 +1,3 @@
-// module Data.Argonaut.JCursor
+"use strict";
 
 exports.exactNull = null;
