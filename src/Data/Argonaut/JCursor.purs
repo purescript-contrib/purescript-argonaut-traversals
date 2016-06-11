@@ -2,53 +2,72 @@ module Data.Argonaut.JCursor where
 
 import Prelude
 
-import Data.Argonaut.Core
-import Data.Argonaut.Decode
-import Data.Argonaut.Encode
+import Data.Argonaut.Core as J
+import Data.Argonaut.Decode (class DecodeJson, decodeJson)
+import Data.Argonaut.Encode (class EncodeJson, encodeJson)
+import Data.Array as A
 import Data.Either (Either(..))
+import Data.Unfoldable (replicate)
 import Data.Foldable (foldl)
-import Data.List (List(), zipWith, range, head, singleton, toList)
+import Data.Int as I
+import Data.List (List(), zipWith, range, head, singleton, fromFoldable)
 import Data.Maybe (Maybe(..), fromMaybe, maybe)
-import Data.Monoid (Monoid)
+import Data.Monoid (class Monoid)
+import Data.StrMap as M
 import Data.Tuple (Tuple(..), fst, snd)
-
-import qualified Data.Array as A
-import qualified Data.Int as I
-import qualified Data.Maybe.Unsafe as MU
-import qualified Data.StrMap as M
 
 data JCursor
   = JCursorTop
   | JField String JCursor
   | JIndex Int JCursor
 
-newtype JsonPrim
-  = JsonPrim (forall a.
-              (JNull -> a) ->
-              (JBoolean -> a) ->
-              (JNumber -> a) ->
-              (JString -> a) ->
-              a)
+derive instance eqJCursor :: Eq JCursor
+derive instance ordJCursor :: Ord JCursor
 
-runJsonPrim :: JsonPrim -> (forall a. (JNull -> a) -> (JBoolean -> a) -> (JNumber -> a) -> (JString -> a) -> a)
+instance showJCursor :: Show JCursor where
+  show JCursorTop = ""
+  show (JField i c) = "." <> i <> show c
+  show (JIndex i c) = "[" <> show i <> "]" <> show c
+
+instance semigroupJCursor :: Semigroup JCursor where
+  append a JCursorTop = a
+  append JCursorTop b = b
+  append (JField i a) b = JField i (a <> b)
+  append (JIndex i a) b = JIndex i (a <> b)
+
+instance monoidJCursor :: Monoid JCursor where
+  mempty = JCursorTop
+
+instance encodeJsonJCursor :: EncodeJson JCursor where
+  encodeJson = encodeJson <<< loop where
+    loop JCursorTop = []
+    loop (JField i c) = [encodeJson i] <> loop c
+    loop (JIndex i c) = [encodeJson i] <> loop c
+
+newtype JsonPrim = JsonPrim (forall a. (J.JNull -> a) -> (J.JBoolean -> a) -> (J.JNumber -> a) -> (J.JString -> a) -> a)
+
+runJsonPrim :: JsonPrim -> (forall a. (J.JNull -> a) -> (J.JBoolean -> a) -> (J.JNumber -> a) -> (J.JString -> a) -> a)
 runJsonPrim (JsonPrim p) = p
 
-foreign import exactNull :: JNull
+instance showJsonPrim :: Show JsonPrim where
+  show p = runJsonPrim p show show show show
+
+foreign import exactNull :: J.JNull
 
 primNull :: JsonPrim
 primNull = JsonPrim (\f _ _ _ -> f exactNull)
 
-primBool :: JBoolean -> JsonPrim
+primBool :: J.JBoolean -> JsonPrim
 primBool v = JsonPrim (\_ f _ _ -> f v)
 
-primNum :: JNumber -> JsonPrim
+primNum :: J.JNumber -> JsonPrim
 primNum v = JsonPrim (\_ _ f _ -> f v)
 
-primStr :: JString -> JsonPrim
+primStr :: J.JString -> JsonPrim
 primStr v = JsonPrim (\_ _ _ f -> f v)
 
-primToJson :: JsonPrim -> Json
-primToJson p = runJsonPrim p fromNull fromBoolean fromNumber fromString
+primToJson :: JsonPrim -> J.Json
+primToJson p = runJsonPrim p J.fromNull J.fromBoolean J.fromNumber J.fromString
 
 insideOut :: JCursor -> JCursor
 insideOut JCursorTop = JCursorTop
@@ -67,157 +86,91 @@ downIndex i = downIndex' where
   downIndex' (JField i' c) = JField i' (downIndex' c)
   downIndex' (JIndex i' c) = JIndex i' (downIndex' c)
 
-cursorGet :: JCursor -> Json -> Maybe Json
+cursorGet :: JCursor -> J.Json -> Maybe J.Json
 cursorGet JCursorTop = Just
-cursorGet (JField i c) = foldJsonObject Nothing g where
-  g m = M.lookup i m >>= cursorGet c
-cursorGet (JIndex i c) = foldJsonArray Nothing g where
-  g a = a A.!! i >>= cursorGet c
+cursorGet (JField i c) = J.foldJsonObject Nothing (cursorGet c <=< M.lookup i)
+cursorGet (JIndex i c) = J.foldJsonArray Nothing (cursorGet c <=< (_ A.!! i))
 
-inferEmpty :: JCursor -> Json
-inferEmpty JCursorTop   = jsonNull
-inferEmpty (JField _ _) = jsonEmptyObject
-inferEmpty (JIndex _ _) = jsonEmptyArray
+inferEmpty :: JCursor -> J.Json
+inferEmpty JCursorTop   = J.jsonNull
+inferEmpty (JField _ _) = J.jsonEmptyObject
+inferEmpty (JIndex _ _) = J.jsonEmptyArray
 
-cursorSet :: JCursor -> Json -> Json -> Maybe Json
+cursorSet :: JCursor -> J.Json -> J.Json -> Maybe J.Json
 cursorSet JCursorTop v = pure <<< const v
-cursorSet (JField i c) v = foldJsonObject defaultObj mergeObjs
+cursorSet (JField i c) v = J.foldJsonObject defaultObj mergeObjs
   where
-  defaultObj :: Maybe Json
-  defaultObj = fromObject <<< M.singleton i <$> cursorSet c v (inferEmpty c)
-
-  mergeObjs :: JObject -> Maybe Json
-  mergeObjs m =
-    fromObject <<< flip (M.insert i) m <$>
-    (cursorSet c v $ fromMaybe (inferEmpty c) (M.lookup i m))
-cursorSet (JIndex i c) v = foldJsonArray defaultArr mergeArrs
+  defaultObj :: Maybe J.Json
+  defaultObj = J.fromObject <<< M.singleton i <$> cursorSet c v (inferEmpty c)
+  mergeObjs :: J.JObject -> Maybe J.Json
+  mergeObjs m
+    = J.fromObject
+    <<< flip (M.insert i) m
+    <$> cursorSet c v (fromMaybe (inferEmpty c) (M.lookup i m))
+cursorSet (JIndex i c) v = J.foldJsonArray defaultArr mergeArrs
   where
-  defaultArr :: Maybe Json
-  defaultArr = fromArray <<< MU.fromJust <<<
-                 flip (A.updateAt i) (A.replicate (i + 1) jsonNull) <$>
-                 cursorSet c v (inferEmpty c)
-
-  mergeArrs :: JArray -> Maybe Json
-  mergeArrs a = (cursorSet c v $ fromMaybe (inferEmpty c) (a A.!! i)) >>= setArr a i
-
-  setArr :: JArray -> Int -> Json -> Maybe Json
+  defaultArr :: Maybe J.Json
+  defaultArr
+    = J.fromArray
+    <$> (flip (A.updateAt i) (replicate (i + 1) J.jsonNull) =<< cursorSet c v (inferEmpty c))
+  mergeArrs :: J.JArray -> Maybe J.Json
+  mergeArrs a =
+    setArr a i =<< cursorSet c v (fromMaybe (inferEmpty c) (a A.!! i))
+  setArr :: J.JArray -> Int -> J.Json -> Maybe J.Json
   setArr xs i v =
     let len = A.length xs
     in if i < 0
        then Nothing
        else if i >= len
-            then setArr (xs <> (A.replicate (i - len + 1) jsonNull)) i v
-            else Just <<< fromArray <<< MU.fromJust $ A.updateAt i v xs
+            then setArr (xs <> (replicate (i - len + 1) J.jsonNull)) i v
+            else J.fromArray <$> A.updateAt i v xs
 
-
-toPrims :: Json -> List (Tuple JCursor JsonPrim)
-toPrims = foldJson nullFn boolFn numFn strFn arrFn objFn
+toPrims :: J.Json -> List (Tuple JCursor JsonPrim)
+toPrims = J.foldJson nullFn boolFn numFn strFn arrFn objFn
   where
   mkTop :: JsonPrim -> List (Tuple JCursor JsonPrim)
   mkTop p = singleton $ Tuple JCursorTop p
-
-  nullFn :: JNull -> List (Tuple JCursor JsonPrim)
+  nullFn :: J.JNull -> List (Tuple JCursor JsonPrim)
   nullFn _ = mkTop primNull
-
-  boolFn :: JBoolean -> List (Tuple JCursor JsonPrim)
+  boolFn :: J.JBoolean -> List (Tuple JCursor JsonPrim)
   boolFn b = mkTop $ primBool b
-
-  numFn :: JNumber -> List (Tuple JCursor JsonPrim)
+  numFn :: J.JNumber -> List (Tuple JCursor JsonPrim)
   numFn n = mkTop $ primNum n
-
-  strFn :: JString -> List (Tuple JCursor JsonPrim)
+  strFn :: J.JString -> List (Tuple JCursor JsonPrim)
   strFn s = mkTop $ primStr s
-
-  arrFn :: JArray -> List (Tuple JCursor JsonPrim)
+  arrFn :: J.JArray -> List (Tuple JCursor JsonPrim)
   arrFn arr =
-    let zipped :: List (Tuple Int Json)
-        zipped = zipWith Tuple (range 0 (A.length arr - 1)) (toList arr)
-
+    let zipped :: List (Tuple Int J.Json)
+        zipped = zipWith Tuple (range 0 (A.length arr - 1)) (fromFoldable arr)
     in zipped >>= arrFn'
-
-  arrFn' :: Tuple Int Json -> List (Tuple JCursor JsonPrim)
-  arrFn' (Tuple i j) = toList ((\t -> Tuple (JIndex i (fst t)) (snd t))
-                               <$> toPrims j)
-
-
-  objFn :: JObject -> List (Tuple JCursor JsonPrim)
+  arrFn' :: Tuple Int J.Json -> List (Tuple JCursor JsonPrim)
+  arrFn' (Tuple i j) =
+    fromFoldable ((\t -> Tuple (JIndex i (fst t)) (snd t)) <$> toPrims j)
+  objFn :: J.JObject -> List (Tuple JCursor JsonPrim)
   objFn obj =
-    let f :: Tuple String Json -> List (Tuple JCursor JsonPrim)
-        f (Tuple i j) = ((\t -> Tuple (JField i (fst t)) (snd t))
-                         <$> toPrims j)
+    let f :: Tuple String J.Json -> List (Tuple JCursor JsonPrim)
+        f (Tuple i j) = (\t -> Tuple (JField i (fst t)) (snd t)) <$> toPrims j
     in M.toList obj >>= f
 
-
-fromPrims :: List (Tuple JCursor JsonPrim) -> Maybe Json
+fromPrims :: List (Tuple JCursor JsonPrim) -> Maybe J.Json
 fromPrims lst = foldl f (inferEmpty <<< fst <$> head lst) lst
   where
-  f :: Maybe Json -> Tuple JCursor JsonPrim -> Maybe Json
+  f :: Maybe J.Json -> Tuple JCursor JsonPrim -> Maybe J.Json
   f j (Tuple c p) = j >>= cursorSet c (primToJson p)
 
-instance showJCursor :: Show JCursor where
-  show JCursorTop = ""
-  show (JField i c) = "." <> i <> show c
-  show (JIndex i c) = "[" <> show i <> "]" <> show c
-
-instance showJsonPrim :: Show JsonPrim where
-  show p = runJsonPrim p show show show show
-
-instance eqJCursor :: Eq JCursor where
-  eq JCursorTop JCursorTop = true
-  eq (JField i1 c1) (JField i2 c2) = i1 == i2 && c1 == c2
-  eq (JIndex i1 c1) (JIndex i2 c2) = i1 == i2 && c1 == c2
-  eq _ _ = false
-
-instance ordJCursor :: Ord JCursor where
-  compare JCursorTop JCursorTop = EQ
-  compare JCursorTop _ = LT
-  compare _ JCursorTop = GT
-  compare (JField _ _) (JIndex _ _) = LT
-  compare (JIndex _ _) (JField _ _) = GT
-  compare (JField i1 c1) (JField i2 c2) = case compare i1 i2 of
-    EQ -> compare c1 c2
-    x  -> x
-  compare (JIndex i1 c1) (JIndex i2 c2) = case compare i1 i2 of
-    EQ -> compare c1 c2
-    x  -> x
-
-instance semigroupJCursor :: Semigroup JCursor where
-  append a JCursorTop = a
-  append JCursorTop b = b
-  append (JField i a) b = JField i (a <> b)
-  append (JIndex i a) b = JIndex i (a <> b)
-
-instance monoidJCursor :: Monoid JCursor where
-  mempty = JCursorTop
-
-instance encodeJsonJCursor :: EncodeJson JCursor where
-  encodeJson = encodeJson <<< loop where
-    loop JCursorTop = []
-    loop (JField i c) = [encodeJson i] <> loop c
-    loop (JIndex i c) = [encodeJson i] <> loop c
-
-fail :: forall a b. (Show a) => a -> Either String b
-fail x = Left $ "Expected String or Number but found: " ++ show x
+fail :: forall a b. Show a => a -> Either String b
+fail x = Left $ "Expected String or Number but found: " <> show x
 
 instance decodeJsonJCursor :: DecodeJson JCursor where
   decodeJson j = decodeJson j >>= loop
     where
-    loop :: Array Json -> Either String JCursor
+    loop :: Array J.Json -> Either String JCursor
     loop arr =
-      maybe (Right JCursorTop) goLoop do
-        x <- A.head arr
-        xs <- A.tail arr
-        pure $ Tuple x xs
-
-    goLoop :: Tuple Json (Array Json) -> Either String JCursor
+      maybe (Right JCursorTop) goLoop $ Tuple <$> A.head arr <*> A.tail arr
+    goLoop :: Tuple J.Json (Array J.Json) -> Either String JCursor
     goLoop (Tuple x xs) = do
       c <- loop xs
-      foldJson fail fail (goNum c) (Right <<< (flip JField c)) fail fail x
-
-    goNum :: JCursor -> JNumber -> Either String JCursor
-    goNum c num =
-      maybe (Left "Not an Int") (Right <<< (flip JIndex c)) $ I.fromNumber num
-
-
-
-
+      J.foldJson fail fail (goNum c) (Right <<< flip JField c) fail fail x
+    goNum :: JCursor -> J.JNumber -> Either String JCursor
+    goNum c =
+      maybe (Left "Not an Int") (Right <<< flip JIndex c) <<< I.fromNumber

@@ -1,7 +1,7 @@
 module Data.Argonaut.Prisms where
 
 import Data.Argonaut.Core
-import Data.Lens (PrismP(), prism')
+import Data.Lens (PrismP, prism')
 
 _Null :: PrismP Json JNull
 _Null = prism' fromNull toNull

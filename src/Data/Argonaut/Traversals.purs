@@ -1,8 +1,8 @@
 module Data.Argonaut.Traversals where
 
-import Data.Argonaut.Core
-import Data.Lens (TraversalP(), filtered)
 import Prelude ((<<<), id)
+import Data.Argonaut.Core
+import Data.Lens (TraversalP, filtered)
 
 _JsonNull :: TraversalP Json Json
 _JsonNull = id <<< filtered isNull
