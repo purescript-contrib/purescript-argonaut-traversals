@@ -1,8 +1,8 @@
 /.*
 !/.gitignore
+!/.jscsrc
+!/.jshintrc
 !/.travis.yml
-bower_components/
-node_modules/
-output/
-dist/
-npm-debug.log
+/bower_components/
+/node_modules/
+/output/

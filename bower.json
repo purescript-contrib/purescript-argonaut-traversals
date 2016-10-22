@@ -21,10 +21,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "purescript-argonaut-codecs": "^1.0.0",
-    "purescript-profunctor-lenses": "^1.0.0"
+    "purescript-argonaut-codecs": "^2.0.0",
+    "purescript-profunctor-lenses": "^2.0.0"
   },
   "devDependencies": {
-    "purescript-strongcheck": "^1.1.1"
+    "purescript-strongcheck": "^2.0.0"
   }
 }

@@ -2,15 +2,16 @@ module Test.Main where
 
 import Prelude
 
-import Data.Argonaut.JCursor (JCursor(..))
-import Data.Argonaut.Encode (encodeJson)
+import Control.Monad.Eff.Console (log)
+
 import Data.Argonaut.Decode (decodeJson)
+import Data.Argonaut.Encode (encodeJson)
+import Data.Argonaut.JCursor (JCursor(..))
+import Data.Either (Either(..))
+
 import Test.StrongCheck (SC, Result, quickCheck', (<?>))
 import Test.StrongCheck.Arbitrary (class Arbitrary, arbitrary)
 import Test.StrongCheck.Gen (chooseInt)
-
-import Control.Monad.Eff.Console (log)
-import Data.Either (Either(..))
 
 newtype TestJCursor = TestJCursor JCursor
 
@@ -19,7 +20,7 @@ runTestJCursor (TestJCursor cursor) = cursor
 
 instance arbJCursor :: Arbitrary TestJCursor where
   arbitrary = do
-    i <- chooseInt 0.0 2.0
+    i <- chooseInt 0 2
     TestJCursor <$> case i of
       1 -> JField <$> arbitrary <*> (runTestJCursor <$> arbitrary)
       2 -> JIndex <$> arbitrary <*> (runTestJCursor <$> arbitrary)
