@@ -117,13 +117,13 @@ cursorSet (JIndex i c) v = J.foldJsonArray defaultArr mergeArrs
   mergeArrs a =
     setArr a i =<< cursorSet c v (fromMaybe (inferEmpty c) (a A.!! i))
   setArr :: J.JArray -> Int -> J.Json -> Maybe J.Json
-  setArr xs i v =
+  setArr xs i' v' =
     let len = A.length xs
-    in if i < 0
+    in if i' < 0
        then Nothing
-       else if i >= len
-            then setArr (xs <> (replicate (i - len + 1) J.jsonNull)) i v
-            else J.fromArray <$> A.updateAt i v xs
+       else if i' >= len
+            then setArr (xs <> (replicate (i' - len + 1) J.jsonNull)) i' v'
+            else J.fromArray <$> A.updateAt i' v' xs
 
 toPrims :: J.Json -> List (Tuple JCursor JsonPrim)
 toPrims = J.foldJson nullFn boolFn numFn strFn arrFn objFn
