@@ -25,9 +25,9 @@ derive instance eqJCursor :: Eq JCursor
 derive instance ordJCursor :: Ord JCursor
 
 instance showJCursor :: Show JCursor where
-  show JCursorTop = ""
-  show (JField i c) = "." <> i <> show c
-  show (JIndex i c) = "[" <> show i <> "]" <> show c
+  show JCursorTop = "JCursorTop"
+  show (JField i c) = "(JField " <> show i <> " " <> show c <> ")"
+  show (JIndex i c) = "(JIndex " <> show i <> " " <> show c <> ")"
 
 instance semigroupJCursor :: Semigroup JCursor where
   append a JCursorTop = a
@@ -43,6 +43,14 @@ instance encodeJsonJCursor :: EncodeJson JCursor where
     loop JCursorTop = []
     loop (JField i c) = [encodeJson i] <> loop c
     loop (JIndex i c) = [encodeJson i] <> loop c
+
+-- | Accepts a name for the value the cursor is reading from, a cursor, and
+-- | prints a path like `value.field.field[index]`.
+printJCursor :: String -> JCursor -> String
+printJCursor valueName = case _ of
+  JCursorTop -> valueName
+  JField i c -> printJCursor valueName c <> "." <> i
+  JIndex i c -> printJCursor valueName c <> "[" <> show i <> "]"
 
 newtype JsonPrim = JsonPrim (forall a. (J.JNull -> a) -> (J.JBoolean -> a) -> (J.JNumber -> a) -> (J.JString -> a) -> a)
 
