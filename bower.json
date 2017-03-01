@@ -25,6 +25,7 @@
     "purescript-profunctor-lenses": "^2.0.0"
   },
   "devDependencies": {
-    "purescript-strongcheck": "^2.0.0"
+    "purescript-strongcheck": "^2.0.0",
+    "purescript-strongcheck-laws": "^1.0.0"
   }
 }
