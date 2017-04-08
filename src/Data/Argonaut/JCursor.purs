@@ -150,7 +150,7 @@ toPrims = J.foldJson nullFn boolFn numFn strFn arrFn objFn
   objFn obj =
     let f :: Tuple String J.Json -> List (Tuple JCursor JsonPrim)
         f (Tuple i j) = (\t -> Tuple (JField i (fst t)) (snd t)) <$> toPrims j
-    in M.toList obj >>= f
+    in M.toUnfoldable obj >>= f
 
 fromPrims :: List (Tuple JCursor JsonPrim) -> Maybe J.Json
 fromPrims lst = foldl f (inferEmpty <<< fst <$> head lst) lst
