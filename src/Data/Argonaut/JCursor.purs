@@ -52,10 +52,8 @@ runJsonPrim (JsonPrim p) = p
 instance showJsonPrim :: Show JsonPrim where
   show p = runJsonPrim p show show show show
 
-foreign import exactNull :: J.JNull
-
 primNull :: JsonPrim
-primNull = JsonPrim (\f _ _ _ -> f exactNull)
+primNull = JsonPrim (\f _ _ _ -> f J.jNull)
 
 primBool :: J.JBoolean -> JsonPrim
 primBool v = JsonPrim (\_ f _ _ -> f v)
