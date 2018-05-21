@@ -22,7 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "purescript-argonaut-core": "#compiler/0.12",
-    "purescript-argonaut-codecs": "cryogenian/purescript-argonaut-codecs#compiler/0.12",
+    "purescript-argonaut-codecs": "#compiler/0.12",
     "purescript-profunctor-lenses": "#compiler/0.12"
   },
   "devDependencies": {
