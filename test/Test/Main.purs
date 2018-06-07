@@ -8,8 +8,8 @@ import Data.Argonaut.JCursor.Gen (genJCursor)
 import Data.Either (Either(..))
 import Effect (Effect)
 import Effect.Console (log)
-import Test.StrongCheck (Result, quickCheck, (<?>))
-import Test.StrongCheck.Gen (Gen)
+import Test.QuickCheck (Result, quickCheck, (<?>))
+import Test.QuickCheck.Gen (Gen)
 
 prop_jcursor_serialization :: Gen Result
 prop_jcursor_serialization = do
