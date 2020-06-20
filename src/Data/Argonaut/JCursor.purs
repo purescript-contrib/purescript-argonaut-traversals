@@ -3,7 +3,7 @@ module Data.Argonaut.JCursor where
 import Prelude
 
 import Data.Argonaut.Core as J
-import Data.Argonaut.Decode (class DecodeJson, decodeJson)
+import Data.Argonaut.Decode (class DecodeJson, decodeJson, JsonDecodeError(..))
 import Data.Argonaut.Encode (class EncodeJson, encodeJson)
 import Data.Array as A
 import Data.Either (Either(..))
@@ -173,19 +173,19 @@ fromPrims lst = foldl f (inferEmpty <<< fst <$> head lst) lst
   f :: Maybe J.Json -> Tuple JCursor JsonPrim -> Maybe J.Json
   f j (Tuple c p) = j >>= cursorSet c (primToJson p)
 
-fail :: forall a b. Show a => a -> Either String b
-fail x = Left $ "Expected String or Number but found: " <> show x
-
 instance decodeJsonJCursor :: DecodeJson JCursor where
   decodeJson j = decodeJson j >>= loop
     where
-    loop :: Array J.Json -> Either String JCursor
+    loop :: Array J.Json -> Either JsonDecodeError JCursor
     loop arr =
       maybe (Right JCursorTop) goLoop $ Tuple <$> A.head arr <*> A.tail arr
-    goLoop :: Tuple J.Json (Array J.Json) -> Either String JCursor
+    goLoop :: Tuple J.Json (Array J.Json) -> Either JsonDecodeError JCursor
     goLoop (Tuple x xs) = do
       c <- loop xs
-      J.caseJson fail fail (goNum c) (Right <<< flip JField c) (map J.stringify >>> fail) (map J.stringify >>> fail) x
-    goNum :: JCursor -> Number -> Either String JCursor
+      let
+        fail :: forall a. Either JsonDecodeError a
+        fail = Left (Named "Int or String" $ UnexpectedValue x)
+      J.caseJson (const fail) (const fail) (goNum c) (Right <<< flip JField c) (const fail) (const fail) x
+    goNum :: JCursor -> Number -> Either JsonDecodeError JCursor
     goNum c =
-      maybe (Left "Not an Int") (Right <<< flip JIndex c) <<< I.fromNumber
+      maybe (Left $ TypeMismatch "Int") (Right <<< flip JIndex c) <<< I.fromNumber
