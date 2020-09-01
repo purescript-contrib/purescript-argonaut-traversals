@@ -6,7 +6,7 @@
 [![Maintainer: garyb](https://img.shields.io/badge/maintainer-garyb-teal.svg)](http://github.com/garyb)
 [![Maintainer: thomashoneyman](https://img.shields.io/badge/maintainer-thomashoneyman-teal.svg)](http://github.com/thomashoneyman)
 
-Prisms, traversals, and zipper for the `Json` type. Part of the [Argonaut](https://github.com/purescript-contrib/purescript-argonaut) is a collection of libraries for working with JSON in PureScript.
+Prisms, traversals, and zipper for the `Json` type. Part of the [Argonaut](https://github.com/purescript-contrib/purescript-argonaut) collection of libraries for working with JSON in PureScript.
 
 ## Installation
 
