@@ -23,7 +23,7 @@
   "dependencies": {
     "purescript-argonaut-core": "^5.0.0",
     "purescript-argonaut-codecs": "^7.0.0",
-    "purescript-profunctor-lenses": "^6.3.0"
+    "purescript-profunctor-lenses": "^6.0.0"
   },
   "devDependencies": {
     "purescript-quickcheck": "^6.0.0"
