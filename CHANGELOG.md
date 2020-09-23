@@ -91,3 +91,4 @@ Updates for the 1.0 core libraries.
 
 ## [v0.1.0](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases/tag/v0.1.0) - 2015-07-14
 
+- Initial release
