@@ -5,41 +5,43 @@ Notable changes to this project are documented in this file. The format is based
 ## [Unreleased]
 
 Breaking changes (😱!!!):
+- Added support for PureScript 0.14 and dropped support for all previous versions (#32)
 
 New features:
 
 Bugfixes:
 
 Other improvements:
+- Changed default branch to `main` from `master`
+- Updated to comply with Contributors library guidelines by adding new issue and pull request templates, updating documentation, and migrating to Spago for local development and CI (#28, #31)
 
 ## [v8.0.0](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases/tag/v8.0.0) - 2020-06-20
 
-Updates to use [`argonaut-codecs` v7.0.0](https://github.com/purescript-contrib/purescript-argonaut-codecs/releases/tag/v7.0.0), which introduces typed decoder errors. These errors provide richer information for processing and printing error messages in JSON libraries.
+- Updated to use [`argonaut-codecs` v7.0.0](https://github.com/purescript-contrib/purescript-argonaut-codecs/releases/tag/v7.0.0), which introduces typed decoder errors. These errors provide richer information for processing and printing error messages in JSON libraries.
 
 ## [v7.0.0](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases/tag/v7.0.0) - 2019-03-05
 
-Updated dependencies
+- Updated dependencies
 
 ## [v6.0.0](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases/tag/v6.0.0) - 2018-12-03
 
-Updates `purescript-argonaut-codecs` dependency, now supporting generic encoding / decoding of records directly (@davezuch).
+- Updated `purescript-argonaut-codecs` dependency, now supporting generic encoding / decoding of records directly (@davezuch).
 
 ## [v4.1.0](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases/tag/v4.1.0) - 2018-11-15
 
-Update documentation and links (@justinwoo)
+- Updated documentation and links (@justinwoo)
 
 ## [v5.0.0](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases/tag/v5.0.0) - 2018-11-12
 
-Updates the `purescript-profunctor-lenses` dependency (@athanclark)
+- Updated the `purescript-profunctor-lenses` dependency (@athanclark)
 
 ## [v4.0.1](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases/tag/v4.0.1) - 2018-06-23
 
-- Adds metadata including contributor guidelines
-- Pushes latest release to Pursuit
+- Added metadata including contributor guidelines and pushed latest release to Pursuit
 
 ## [v4.0.0](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases/tag/v4.0.0) - 2018-06-08
 
-Updates for 0.12
+- Updated for 0.12
 
 ## [v3.1.0](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases/tag/v3.1.0) - 2017-04-08
 
@@ -52,7 +54,7 @@ Updates for 0.12
 
 ## [v2.0.1](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases/tag/v2.0.1) - 2016-11-17
 
-- Fix shadowed name warnings
+- Fixed shadowed name warnings
 
 ## [v2.0.0](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases/tag/v2.0.0) - 2016-10-22
 
@@ -60,13 +62,11 @@ Updates for 0.12
 
 ## [v1.0.0](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases/tag/v1.0.0) - 2016-06-11
 
-Updates for the 1.0 core libraries.
+- Updated for the 1.0 core libraries.
 
 ## [v0.7.0](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases/tag/v0.7.0) - 2016-01-15
 
-- Updated for latest `purescript-argonaut-codecs`.
-
-**NOTE**: This changes Argonaut's encoding for `Either`s.
+- Updated for latest `purescript-argonaut-codecs`. **NOTE**: This changes Argonaut's encoding for `Either`s.
 
 ## [v0.6.0](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases/tag/v0.6.0) - 2015-11-20
 
@@ -84,6 +84,8 @@ Updates for the 1.0 core libraries.
 - Switched to `purescript-profunctor-lenses`
 
 ## [v0.3.0](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases/tag/v0.3.0) - 2015-09-08
+
+- Updated dependencies (#4)
 
 ## [v0.2.0](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases/tag/v0.2.0) - 2015-08-19
 
