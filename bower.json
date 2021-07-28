@@ -23,7 +23,21 @@
   "dependencies": {
     "purescript-argonaut-codecs": "^8.0.0",
     "purescript-argonaut-core": "^6.0.0",
-    "purescript-profunctor-lenses": "^7.0.0"
+    "purescript-arrays": "^6.0.0",
+    "purescript-control": "^5.0.0",
+    "purescript-either": "^5.0.0",
+    "purescript-foldable-traversable": "^5.0.0",
+    "purescript-foreign-object": "^3.0.0",
+    "purescript-gen": "^3.0.0",
+    "purescript-integers": "^5.0.0",
+    "purescript-lists": "^6.0.0",
+    "purescript-maybe": "^5.0.0",
+    "purescript-prelude": "^5.0.0",
+    "purescript-profunctor-lenses": "^7.0.0",
+    "purescript-strings": "^5.0.0",
+    "purescript-tailrec": "^5.0.0",
+    "purescript-tuples": "^6.0.0",
+    "purescript-unfoldable": "^5.0.0"
   },
   "devDependencies": {
     "purescript-console": "^5.0.0",
