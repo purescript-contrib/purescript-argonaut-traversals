@@ -11,6 +11,7 @@ New features:
 Bugfixes:
 
 Other improvements:
+- Updated `README.md` to make the Quick start example runnable (#37 by @dk949)
 - Added `purs-tidy` formatter (#36 by @thomashoneyman)
 
 ## [v9.0.0](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases/tag/v9.0.0) - 2021-02-26
