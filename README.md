@@ -4,7 +4,6 @@
 [![Release](http://img.shields.io/github/release/purescript-contrib/purescript-argonaut-traversals.svg)](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases)
 [![Pursuit](http://pursuit.purescript.org/packages/purescript-argonaut-traversals/badge)](http://pursuit.purescript.org/packages/purescript-argonaut-traversals)
 [![Maintainer: garyb](https://img.shields.io/badge/maintainer-garyb-teal.svg)](http://github.com/garyb)
-[![Maintainer: thomashoneyman](https://img.shields.io/badge/maintainer-thomashoneyman-teal.svg)](http://github.com/thomashoneyman)
 
 Prisms, traversals, and zipper for the `Json` type. Part of the [Argonaut](https://github.com/purescript-contrib/purescript-argonaut) collection of libraries for working with JSON in PureScript.
 
