@@ -15,7 +15,6 @@
   , "maybe"
   , "prelude"
   , "profunctor-lenses"
-  , "psci-support"
   , "quickcheck"
   , "strings"
   , "tailrec"
