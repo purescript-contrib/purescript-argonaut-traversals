@@ -1,5 +1,18 @@
 # Argonaut Traversals
 
+# ⚠️ This library is deprecated
+
+The `purescript-argonaut-traversals` library is now **deprecated**. This library depends on:
+
+- [`purescript-argonaut-core`](https://github.com/purescript-contrib/purescript-argonaut-core) (deprecated in favor of [`purescript-json`](https://github.com/purescript/purescript-json))
+- [`purescript-argonaut-codecs`](https://github.com/purescript-contrib/purescript-argonaut-codecs) (deprecated in favor of [`purescript-codec-json`](https://github.com/garyb/purescript-codec-json))
+
+As of now, there is no direct analog of `purescript-argonaut-traversals` that utilizes `purescript-json`. We encourage you to monitor the ecosystem for future developments and alternatives.
+
+Thank you for your understanding and support of `purescript-argonaut-traversals`!
+
+--------
+
 [![CI](https://github.com/purescript-contrib/purescript-argonaut-traversals/workflows/CI/badge.svg?branch=main)](https://github.com/purescript-contrib/purescript-argonaut-traversals/actions?query=workflow%3ACI+branch%3Amain)
 [![Release](http://img.shields.io/github/release/purescript-contrib/purescript-argonaut-traversals.svg)](https://github.com/purescript-contrib/purescript-argonaut-traversals/releases)
 [![Pursuit](http://pursuit.purescript.org/packages/purescript-argonaut-traversals/badge)](http://pursuit.purescript.org/packages/purescript-argonaut-traversals)
