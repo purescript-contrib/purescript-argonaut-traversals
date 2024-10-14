@@ -27,7 +27,7 @@ You can use the prisms defined in `Data.Argonaut.Prisms` with functions from the
 
 ```js
 // FFI file
-exports.sampleJson = { "a": { "b": [ 10, 11, 12 ] } }
+exports.sampleJson = { a: { b: [10, 11, 12] } };
 ```
 
 ```purs
